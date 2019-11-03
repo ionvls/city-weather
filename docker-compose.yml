@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+  ##########################
+  ### SETUP DB CONTAINER
+  ##########################
+  db:
+    image: mongo
+    ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      # Map physical volume to virtual for data persistence
+      - contacts-dbdata:/data/db
+
+  ##########################
+  ### SETUP SERVER CONTAINER
+  ##########################
+  server:
+    build: ./server
+    environment:
+      - MONGO_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_URI}
+      - PORT=${SERVER_PORT}
+      - NODE_ENV=${NODE_ENV}
+      - TOKEN_SECRET=${TOKEN_SECRET}
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    command: node src/server.js
+    links:
+      - db
+    depends_on:
+      - db
+    restart: always
+
+  ##########################
+  ### SETUP CLIENT CONTAINER
+  ##########################
+  client:
+    build: ./client
+    ports:
+      - 80:80
+    links:
+      - server
+    depends_on:
+      - server
+    restart: always
+
+# Add this to include data volume for mongo
+# Confirm this is working later
+volumes:
+  contacts-dbdata:

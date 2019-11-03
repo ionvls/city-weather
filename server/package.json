@@ -1,0 +1,25 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "backend",
+  "main": "index.js",
+  "author": "ioannis vlassis",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "connect-mongo": "^3.0.0",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "mongoose": "^5.7.6",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.19.4"
+  },
+  "scripts": {
+    "server-dev": "TOKEN_SECRET='easjkdaskjdkjsabdkjabs' nodemon src/server.js",
+    "test": "nodemon src/test.js",
+
+    "start": "TOKEN_SECRET='easjkdaskjdkjsabdkjabs' node src/server.js"
+  }
+}

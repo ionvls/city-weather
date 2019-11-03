@@ -50,6 +50,35 @@ const Cities = props => (
         + Add city
       </button>
       </div>
+      <div>
+        <button 
+        className="btn btn-info point"
+        onClick={e => props.performCheck(e)}  
+        >Perform temperature check</button>
+      </div>
+      {
+        props.temps !== [] &&
+          <div>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>City Name</th>
+                <th>Results</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                props.temps.map((c, index) => (
+                  <tr key={c._id}>
+                    <td>{c.city_name}</td>
+                    <td>{c.results}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </Table>
+          </div>
+      }
   </Container>
   
 )
@@ -69,6 +98,7 @@ async function refreshCities(props) {
 const CitiesCompose = compose(
   withState('cities', 'setCities', []),
   withState('selectedCity', 'setSelectedCity', ""),
+  withState('temps', 'setTemps', []),
   
   lifecycle({
     async componentDidMount() {
@@ -78,6 +108,18 @@ const CitiesCompose = compose(
     }
   }),
   withHandlers({
+    performCheck: props => async (e) => {
+      let res = await instance.get(`/check/perform`).then(resp => {
+        if (resp.data.status) {
+          return resp.data.data.allCities;
+        }
+        else
+          return false;
+      });
+        if (res) {
+        props.setTemps(res);
+      }
+    },
     // add city
     addCity: props => async (e) => {
       e.preventDefault()

@@ -36,39 +36,103 @@ const Cities = props => (
         </tbody>
       </Table>
     </div>
-    <button
-      className="btn btn-info point"
-      //onClick={e => props.addCity()}
-    >
-      + Add city
-    </button>
+    <div>
+      <select id="cities" onChange={e => props.setSelectedCity(e.target.value)}>
+        <option value="">Select city</option>
+        <option value="Athens">Athens</option>
+        <option value="London">London</option>
+        <option value="Paris">Paris</option>
+      </select>
+      <button
+        className="btn btn-info point"
+        onClick={e => props.addCity(e)}
+      >
+        + Add city
+      </button>
+      </div>
   </Container>
   
 )
+async function refreshCities(props) {
+  let cities = await instance.get(`/city`).then(resp => {
+    if (resp.data.status) {
+      return resp.data.data.allCities;
+    }
+    else
+      return false;
+  });
+    if (cities) {
+    props.setCities(cities.sort());
+  }
+}
 
 const CitiesCompose = compose(
   withState('cities', 'setCities', []),
+  withState('selectedCity', 'setSelectedCity', ""),
   
   lifecycle({
     async componentDidMount() {
       
       // get cities
-      let cities = await instance.get(`/city`).then(resp => {
-        if (resp.data.status) {
-          return resp.data.data.allcities
-        }
-        else return false
-      })
-
-      if(cities){
-        this.props.setCities(cities.sort())///////////////////////////////
-      }   
+      await refreshCities(this.props)   
     }
   }),
   withHandlers({
+    // add city
+    addCity: props => async (e) => {
+      e.preventDefault()
+      if (props.selectedCity !== undefined && props.selectedCity !== "") {
+         swal({
+           title: 'Add City',
+           text: `Are you sure to add city '${props.selectedCity}'`,
+           showCancelButton: true,
+           reverseButtons: true,
+           confirmButtonText: 'Confirm',
+           confirmButtonColor: '#1BB7BF',
+           customClass: 'Button',
+           showLoaderOnConfirm: true,
+           preConfirm: () => {
+             return new Promise((resolve, reject) => {
+               instance.post(`/city/create`, {
+                 name: props.selectedCity
+               }).then(data => {
+                 resolve(data.data)
+               })
+             })
+           }
+         }).then(async (data) => {
+           if (data.status) {
+              props.setCities([])
+              swal({
+               title: 'Success',
+               text: `City Added`,
+               type: 'success',
+               confirmButtonText: 'OK',
+               confirmButtonColor: '#1BB7BF'
+              })
+              await refreshCities(props)
+
+           } else {
+             swal({
+               title: 'Failed',
+               text: data.error,
+               type: 'warning',
+               confirmButtonText: 'OK',
+               confirmButtonColor: '#1BB7BF'
+             })
+           }
+         }, function(dismiss) {
+           if (dismiss === 'cancel' || dismiss === 'close') {
+             // ignore
+           }
+         })
+       }
+    },
+
     // Delete city upon confirmation
     onDelete: props => async (e,city) => {
       e.preventDefault()
+      console.log(city._id)
       if (city !== undefined) {
          swal({
            title: 'Delete',
@@ -81,9 +145,8 @@ const CitiesCompose = compose(
            showLoaderOnConfirm: true,
            preConfirm: () => {
              return new Promise((resolve, reject) => {
-               instance.post(`/city/delete`, {
-                 _id: city._id,
-               }).then(data => {
+               instance.delete(`/city/delete/${city._id}`)
+                .then(data => {
                  resolve(data.data)
                })
              })
@@ -98,9 +161,7 @@ const CitiesCompose = compose(
                confirmButtonText: 'OK',
                confirmButtonColor: '#1BB7BF'
               })
-              let cities = await instance.get(`/city`)
-               .then(resp => resp.data.data.allcities)
-              props.setCities(cities.sort())
+              await refreshCities(props) 
 
            } else {
              swal({
@@ -117,7 +178,7 @@ const CitiesCompose = compose(
            }
          })
        }
-     },
+    }
 
   })
 )(Cities)

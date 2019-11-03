@@ -4,10 +4,6 @@ const mongoose = require('mongoose')
 // Question Schaema for mongoDB
 const CheckSchema = mongoose.Schema(
   {
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      require: true
-    },
     city_name: { type: String, require: true },
     temp: { type: Number, require: true },
     timestamp: { type: Date, default: Date.now },

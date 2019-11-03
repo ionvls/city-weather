@@ -8,9 +8,8 @@ import '../node_modules/sweetalert2/dist/sweetalert2.min.css'
 import '../node_modules/font-awesome/css/font-awesome.min.css'
 
 import {
-  Contacts,
-  NotFoundPage,
-  ContactDetails
+  Cities,
+  NotFoundPage
 } from './containers'
 
 const App = props => {

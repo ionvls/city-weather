@@ -4,10 +4,6 @@ const mongoose = require('mongoose')
 // Question Schaema for mongoDB
 const CitySchema = mongoose.Schema(
   {
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      require: true
-    },
     name: { type: String, require: true },
   },
   {
@@ -24,6 +20,7 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       try {
         let city = await CityModel.create(args)
+        console.log(city.name)
         resolve(city)
       } catch (err) {
         reject(err)

@@ -48,6 +48,15 @@ module.exports = {
   },
 
   createCity: async (req, res) => {
+    let city = await City.getOne({name: req.body.name})
+    if (city){
+      res.json({
+        status: false,
+        error: `City ${city.name} already exists`
+      })
+      return
+    }
+
     let result = await City.create({
       name: req.body.name
       })
@@ -70,20 +79,20 @@ module.exports = {
 
   deleteCity: async (req, res) => {
     // Find City by id and delete it
-    const city_id = req.body.city_id
+    const city_id = req.params.id
     let city
     city = await City.getOneById(city_id)
       .then(data => data)
       .catch(err => err)
-
+    console.log(city)
     if (city === null) {
       res.json({
         status: false,
-        error: 'cannot find City'
+        error: 'Cannot find City'
       })
     } else {
       await City.remove({
-        _id: City.city_id
+        _id: city._id
       })
       .then(data => data)
       res.json({

@@ -1,5 +1,11 @@
-# Contact List.
+# Cities Weather Predictions.
 
+# Dependencies
+```
+nodejs -v 12.13.0
+mongodb v3.6.8
+yarn 1.12.1
+```
 
 # Developemnt Guide
 In order to start the development environment you need to execute the following commands.
@@ -20,6 +26,7 @@ Start `Nodejs Backend`.
 $ cd server 
 $ yarn server-dev
 ```
+Visit http://localhost:3000
 
 **Important!** you must start `Mongodb` together for using database.
 ```

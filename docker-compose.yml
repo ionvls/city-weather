@@ -14,7 +14,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       # Map physical volume to virtual for data persistence
-      - contacts-dbdata:/data/db
+      - cities-dbdata:/data/db
 
   ##########################
   ### SETUP SERVER CONTAINER
@@ -51,4 +51,4 @@ services:
 # Add this to include data volume for mongo
 # Confirm this is working later
 volumes:
-  contacts-dbdata:
+  cities-dbdata:

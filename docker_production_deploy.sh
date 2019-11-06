@@ -6,7 +6,7 @@ docker-compose -f docker-compose.yml kill
 # Forcefully removes any stopped service containers.
 docker-compose -f docker-compose.yml rm -f
 
-docker volume create contacts-dbdata
+docker volume create cities-dbdata
 
 docker-compose -f docker-compose.yml build
 

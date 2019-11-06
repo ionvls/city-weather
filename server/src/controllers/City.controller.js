@@ -84,7 +84,6 @@ module.exports = {
     city = await City.getOneById(city_id)
       .then(data => data)
       .catch(err => err)
-    console.log(city)
     if (city === null) {
       res.json({
         status: false,

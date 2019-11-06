@@ -6,7 +6,7 @@ const CheckSchema = mongoose.Schema(
   {
     city_name: { type: String, require: true },
     temp: { type: Number, require: true },
-    timestamp: { type: Date, default: Date.now },
+    date_measured: { type: Date, default: Date.now },
   },
   {
     timestamps: true,
@@ -23,6 +23,33 @@ module.exports = {
       try {
         let check = await CheckModel.create(args)
         resolve(check)
+      } catch (err) {
+        reject(err)
+      }
+    })
+  },
+  getAvgMinMax: args => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let resp = await CheckModel.aggregate([
+          { "$match": {
+              "city_name": {"$in": args}
+            }
+          },
+          { "$group": {
+              _id: "$city_name",
+              "max": { "$max": "$temp" },
+              "min": { "$min": "$temp" },
+              "avg": { "$avg": "$temp" }
+          }},
+          { "$project": {
+            city_name: "$_id",
+            max: "$max",
+            min: "$min",
+            avg: "$avg"
+          }}
+        ])
+        resolve(resp)
       } catch (err) {
         reject(err)
       }

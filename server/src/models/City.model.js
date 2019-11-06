@@ -20,7 +20,6 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       try {
         let city = await CityModel.create(args)
-        console.log(city.name)
         resolve(city)
       } catch (err) {
         reject(err)

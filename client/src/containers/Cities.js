@@ -42,9 +42,11 @@ const Cities = props => (
         <div>
           <select id="cities" onChange={e => props.setSelectedCity(e.target.value)}>
             <option value="">Select city</option>
-            <option value="Athens">Athens</option>
-            <option value="London">London</option>
-            <option value="Paris">Paris</option>
+            {
+              props.citiesToAdd.map((city, index) => (
+                <option value={city}>{city}</option>
+              ))
+            }
           </select>
           <button
             className="btn btn-success point"
@@ -118,10 +120,11 @@ const CitiesCompose = compose(
   withState('selectedCity', 'setSelectedCity', ""),
   withState('temps', 'setTemps', []),
   withState('checksDisabled', 'setChecksDisabled', true),
+  withState('citiesToAdd', 'setCitiesToAdd', []),
 
   lifecycle({
     async componentDidMount() {
-      
+      this.props.setCitiesToAdd(['Athens','Paris','London','Berlin','Madrid','Rome','Barcelona'].sort())
       // get cities
       await refreshCities(this.props) 
     }
